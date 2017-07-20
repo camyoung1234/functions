@@ -1,0 +1,61 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="portfolio-selector">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document
+        path="/users/[[uid]]/portfolios"
+        data="{{portfolioIds}}">
+    </firebase-document>
+
+	<iron-list items="[[portfolioIds]]" as="portfolioId">
+	  <template>
+        <firebase-document
+            path="/portfolios/[[portfolioId]]"
+            data="{{portfolio}}">
+        </firebase-document>
+	    <paper-item>[[portfolio.name]]</paper-item>
+	  </template>
+	</iron-list>
+  </template>
+
+  <script>
+    class PortfolioSelector extends Polymer.Element {
+      static get is() { return 'portfolio-selector'; }
+
+      static get properties() {
+      	return {
+      	  uid: {
+      	    observer: "_uidObserver"
+      	  },
+          portfolioIds: {
+            value: [],
+   			observer: "_portfolioIdsObserver"
+          }
+      	}
+      }
+
+      _portfolioIdsObserver() {
+        console.log("_portfolioIdsObserver");
+        console.log(this.portfolioIds);
+        console.log(this.uid);
+      }
+
+      _uidObserver() {
+        console.log("_uidObserver");
+        console.log(this.uid);
+      }
+    }
+
+    window.customElements.define(PortfolioSelector.is, PortfolioSelector);
+  </script>
+</dom-module>
