@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="stock-plot">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div id="plot" style="height:20%"></div>
+
+  </template>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    class StockPlot extends Polymer.Element {
+      static get is() { return 'stock-plot'; }
+
+      ready() {
+        super.ready();
+        var plot = this.$.plot;
+        var trace1 = {
+            x: ["2017-07-20T15:20:04.629Z", "2017-07-20T15:21:04.629Z", "2017-07-20T15:22:04.629Z", "2017-07-20T15:23:04.629Z", "2017-07-20T15:24:04.629Z"],
+            y: [1, 2, 4, 8, 16],
+            type: "scatter",
+            mode: "lines"
+        };
+        var trace2 = {
+            x: ["2017-07-20T15:25:04.629Z", "2017-07-20T15:26:04.629Z", "2017-07-20T15:27:04.629Z", "2017-07-20T15:28:04.629Z", "2017-07-20T15:29:04.629Z"],
+            y: [3, 2,5, 6, 10],
+            type: "scatter",
+            mode: "lines"
+        };
+        var layout = {
+          margin: { t: 0 },
+          xaxis: {
+            type: "date",
+            visible: true,
+            tickformat: "%H:%M%a"
+          },
+          legend: { showlegend: false },
+          images: [{
+              "source": "../images/google-logo.png",
+              "xref": "x",
+              "yref": "y",
+              "x": "2017-07-20T15:24:04.629Z",
+              "y": 16,
+              "sizex": 60000,
+              "sizey": 1,
+              "xanchor": "center",
+              "yanchor": "middle"
+          }]
+        };
+        Plotly.plot(
+            plot,
+            [trace1, trace2],
+            layout,
+            { staticPlot: true });
+        window.onresize = function() {
+          Plotly.Plots.resize(plot);
+        };
+      }
+    }
+
+    window.customElements.define(StockPlot.is, StockPlot);
+  </script>
+</dom-module>
