@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="stock-row">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <paper-icon-item>
+      <iron-icon icon="favorite" slot="item-icon"></iron-icon>
+      <paper-item-body two-line>
+        <div>[[stock.symbol]]</div>
+        <div secondary>[[stock.price]] +[[stock.change]]</div>
+      </paper-item-body>
+      <iron-icon icon="trending-up"></iron-icon>
+    </paper-icon-item>
+  </template>
+
+  <script>
+    class StockRow extends Polymer.Element {
+      static get is() { return 'stock-row'; }
+
+      static get properties() {
+        return {
+          stock: {
+            value: {
+                    symbol: 'NULL',
+              price: 0.01,
+              change: 0.00
+            }
+          }
+        }
+      }
+    }
+
+    window.customElements.define(StockRow.is, StockRow);
+  </script>
+</dom-module>
