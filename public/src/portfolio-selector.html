@@ -20,7 +20,7 @@
 	<iron-list items="[[portfolioIds]]" as="portfolioId">
 	  <template>
         <firebase-document
-            path="/portfolios/[[portfolioId]]"
+            path="/portfolios/[[portfolioId.value]]"
             data="{{portfolio}}">
         </firebase-document>
 	    <paper-item>[[portfolio.name]]</paper-item>

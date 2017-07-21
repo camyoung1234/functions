@@ -1,8 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="stock-row.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="stock-list">
   <template>
@@ -12,18 +12,29 @@
       }
     </style>
 
-    <paper-listbox>
-	  <iron-list items="[[stocks]]" as="stock">
-	    <template>
-	  	  <stock-row stock="[[stock]]"></stock-row>
-	    </template>
-	  </iron-list>
-    </paper-listbox>
+    <firebase-document
+        path="/transactions/[[uid]]"
+        data="{{transactions}}">
+    </firebase-document>
+
+	<iron-list items="[[transactions]]" as="transaction">
+	  <template>
+	    <stock-row stock="[[transaction]]"></stock-row>
+	  </template>
+	</iron-list>
   </template>
 
   <script>
     class StockList extends Polymer.Element {
       static get is() { return 'stock-list'; }
+
+      static get properties() {
+      	return {
+          transactions: {
+            value: []
+          }
+      	}
+      }
     }
 
     window.customElements.define(StockList.is, StockList);

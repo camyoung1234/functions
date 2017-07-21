@@ -11,11 +11,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="my-view1.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="stock-list.html">
+<link rel="import" href="portfolio-selector.html">
 
 <dom-module id="stock-app">
   <template>
@@ -40,18 +48,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0 20px;
       }
 
+      .fab {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+      }
+
     </style>
 
-    <app-header-layout fullbleed>
-      <app-header slot="header" fixed shadow>
-        <app-toolbar>
-          <div main-title>Stocks</div>
-        </app-toolbar>
-      </app-header>
-      <div>
-        <my-view1></my-view1>
-      </div>
-    </app-header-layout>
+    <firebase-app
+        auth-domain="functions-150616.firebaseapp.com"
+        database-url="https://functions-150616.firebaseio.com"
+        api-key="AIzaSyCZCx__tfYPBlNaayq98kEF5sxVS97-lAM"
+        storage-bucket="functions-150616.appspot.com"
+        messaging-sender-id="542391824303">
+    </firebase-app>
+    <firebase-auth id="auth" user="{{user}}" provider="google" on-error="_authenticationError" status-known="{{statusKnown}}">
+    </firebase-auth>
+
+    <app-drawer-layout fullbleed>
+      <app-drawer id="drawer" slot="drawer">
+        <app-toolbar>Portfolios</app-toolbar>
+        <portfolio-selector uid=[[user.uid]]></portfolio-selector>
+      </app-drawer>
+      <app-header-layout>
+        <app-header slot="header" fixed shadow>
+          <app-toolbar>
+            <paper-icon-button icon="menu" on-tap="_toggleDrawer"></paper-icon-button>
+            <div main-title>Stocks</div>
+          </app-toolbar>
+        </app-header>
+        <div>
+          <stock-list uid="[[user.uid]]"></stock-list>
+        </div>
+      </app-header-layout>
+    </app-drawer-layout>
+        <paper-fab class="fab" icon="add" on-tap="_createTransaction"></paper-fab>
+    
     
   </template>
 
@@ -60,6 +93,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get is() { return 'stock-app'; }
 
+      static get properties() {
+        return {
+          statusKnown: {
+            type: Boolean,
+            observer: '_checkAuthenticationStatus'
+          }
+        };
+      }
+
+      _checkAuthenticationStatus() {
+        var auth = this.$.auth;
+        if (auth.statusKnown && !auth.signedIn) {
+          this.$.auth.signInWithPopup().then(this._authenticationSuccess);
+        }
+      }
+
+      _authenticationSuccess(response) {
+        console.log('authenticated')
+      }
+
+      _authenticationError(error) {
+        console.log('ERROR')
+        alert(error);
+      }
+
+      _createTransaction() {
+        console.log('tap!');
+      }
+
+      _toggleDrawer() {
+        console.log('toggle-drawer');
+        var drawer = this.$.drawer;
+        drawer.toggle();
+      }
     }
 
     window.customElements.define(StockApp.is, StockApp);
